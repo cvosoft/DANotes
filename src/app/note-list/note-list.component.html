@@ -134,6 +134,7 @@
     </div>
     <div>
 
+        <!--
         <ul>
             @for (item of (this.noteService.items$ | async); track item) {
             <li>
@@ -141,13 +142,12 @@
             </li>
             }
         </ul>
-
-
-        <!--
-        @for (note of noteList; track note) {
-            <app-note [note]="note"></app-note>
-          }
     -->
+
+        @for (note of getDummyData(); track note) {
+        <app-note [note]="note"></app-note>
+        }
+
 
     </div>
 </div>
