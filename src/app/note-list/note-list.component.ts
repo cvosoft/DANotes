@@ -4,7 +4,7 @@ import { NoteListService } from '../firebase-services/note-list.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NoteComponent } from './note/note.component';
- 
+
 
 
 @Component({
@@ -25,7 +25,16 @@ export class NoteListComponent {
   }
 
   getList(): Note[] {
-    return this.noteService.normalNotes;
+    if (this.status == "notes") {
+      if (this.favFilter == "all") {
+        return this.noteService.normalNotes;
+      } else {
+        return this.noteService.FavNotes;
+      }
+    }
+    else {
+      return this.noteService.trashNotes;
+    }
   }
 
   getTrashList(): Note[] {

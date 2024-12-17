@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Note } from '../interfaces/note.interface';
-import { deleteDoc, updateDoc, Firestore, collection, collectionData, doc, onSnapshot, addDoc } from '@angular/fire/firestore';
+import { query, where, orderBy, limit, deleteDoc, updateDoc, Firestore, collection, collectionData, doc, onSnapshot, addDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 
@@ -11,12 +11,12 @@ export class NoteListService {
 
   trashNotes: Note[] = [];
   normalNotes: Note[] = [];
+  FavNotes: Note[] = [];
 
-  //items$;
-  //items;
 
   unsubTrash;
   unsubNotes;
+  unsubFavs;
 
 
   firestore: Firestore = inject(Firestore);
@@ -26,6 +26,7 @@ export class NoteListService {
 
     this.unsubTrash = this.subTrashList();
     this.unsubNotes = this.subNotesList();
+    this.unsubFavs = this.subFavsList();
 
   }
 
@@ -89,6 +90,7 @@ export class NoteListService {
   ngonDestroy() {
     this.unsubTrash();
     this.unsubNotes();
+    this.unsubFavs();
   }
 
 
@@ -111,6 +113,16 @@ export class NoteListService {
     });
   }
 
+
+  subFavsList() {
+    const q = query(this.getNotesRef(), where("marked", "==", true));
+    return onSnapshot(q, (list) => {
+      this.FavNotes = [];
+      list.forEach(element => {
+        this.FavNotes.push(this.setNoteObject(element.data(), element.id));
+      })
+    });
+  }
 
 
   getTrashRef() {
