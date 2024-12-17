@@ -4,7 +4,7 @@ import { NoteListService } from '../firebase-services/note-list.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NoteComponent } from './note/note.component';
-
+ 
 
 
 @Component({
