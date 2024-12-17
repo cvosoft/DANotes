@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Note } from '../interfaces/note.interface';
-import { Firestore, collection, collectionData, doc, onSnapshot, addDoc } from '@angular/fire/firestore';
+import { deleteDoc, updateDoc, Firestore, collection, collectionData, doc, onSnapshot, addDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 
@@ -29,14 +29,61 @@ export class NoteListService {
 
   }
 
-  async addNote(item: {}) {
-    await addDoc(this.getNotesRef(), item).catch(
-      (err) => { console.error(err) }
-    ).then(
-      (docRef) => {
-        console.log("Doc written with id", docRef?.id);
+  async addNote(item: Note, collId: "notes" | "trash") {
+    if (collId == "notes") {
+      await addDoc(this.getNotesRef(), item).catch(
+        (err) => { console.error(err) }
+      ).then(
+        (docRef) => {
+          console.log("Doc written with id", docRef?.id);
+        }
+      )
+    } else {
+      await addDoc(this.getTrashRef(), item).catch(
+        (err) => { console.error(err) }
+      ).then(
+        (docRef) => {
+          console.log("Doc written with id", docRef?.id);
+        }
+      )
+    }
+  }
+
+  async deleteNote(collId: "notes" | "trash", docId: string) {
+    await deleteDoc(this.getSingleDocRef(collId, docId)).catch(
+      (err) => {
+        console.log(err);
       }
     )
+  }
+
+
+  async updateNote(note: Note) {
+    if (note.id) {
+      let docRef = this.getSingleDocRef(this.getCollIdFromNote(note), note.id);
+      await updateDoc(docRef, this.getCleanJson(note)).catch(
+        (err) => { console.error(err) }
+      ).then();
+    }
+  }
+
+
+  getCleanJson(note: Note): {} {
+    return {
+      type: note.type,
+      title: note.title,
+      content: note.content,
+      marked: note.marked,
+    }
+  }
+
+
+  getCollIdFromNote(note: Note) {
+    if (note.type == 'note') {
+      return 'notes'
+    } else {
+      return 'trash'
+    }
   }
 
   ngonDestroy() {
