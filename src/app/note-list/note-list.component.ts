@@ -21,7 +21,7 @@ export class NoteListComponent {
 
   constructor(private noteService: NoteListService) {
     //this.noteList = this.getDummyData()
-    this.noteList = this.getList();
+    //this.noteList = this.getList();
   }
 
   getList(): Note[] {
